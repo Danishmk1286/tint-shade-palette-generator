@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 
-Sitemap: https://www.tintandshadesgenerator.com/sitemap.xml
+# Sitemap
+Sitemap: https://shadetintgenie.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
