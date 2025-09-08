@@ -8,7 +8,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl">🎨</span>
+            <img src="/lovable-uploads/d9b3b63e-cacd-4ea2-aca6-4f735b5e7c41.png" alt="Shade Tint Genie Logo" className="w-8 h-8" />
             <span className="font-bold text-lg">Shade Tint Genie</span>
           </Link>
           
