@@ -1,13 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
 import { FileText, BookOpen } from 'lucide-react';
-
 const Header = () => {
-  return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  return <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
@@ -33,14 +30,12 @@ const Header = () => {
         </div>
       </div>
       
-      <div className="text-center space-y-4 py-6">
+      <div className="text-center space-y-4 py-[36px] bg-black/0">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight">🎨 Shade Tint Genie: Free Online Color Shades & Tints Generator</h1>
         <p className="text-muted-foreground max-w-3xl mx-auto text-lg px-4">
           Create stunning color variations instantly with Shade Tint Genie — the ultimate tool for designers, developers, and artists. Generate accessible tints and shades from any HEX or RGB color for web design, UI mockups, branding palettes, and more. Fast, intuitive, and completely free.
         </p>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default Header;
