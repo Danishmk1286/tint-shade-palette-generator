@@ -33,7 +33,7 @@ const Header = () => {
         </div>
       </div>
       
-      <div className="text-center space-y-6 py-8">
+      <div className="text-center space-y-4 py-6">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight">🎨 Shade Tint Genie: Free Online Color Shades & Tints Generator</h1>
         <p className="text-muted-foreground max-w-3xl mx-auto text-lg px-4">
           Create stunning color variations instantly with Shade Tint Genie — the ultimate tool for designers, developers, and artists. Generate accessible tints and shades from any HEX or RGB color for web design, UI mockups, branding palettes, and more. Fast, intuitive, and completely free.

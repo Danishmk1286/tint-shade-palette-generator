@@ -19,10 +19,10 @@ const Index = () => {
     <div className="min-h-screen bg-background text-foreground antialiased">
       <Toaster position="top-center" />
       
-      <div className="container max-w-5xl mx-auto px-4 py-12 sm:py-16 md:py-24 space-y-12">
+      <div className="container max-w-5xl mx-auto px-4 py-8 space-y-8">
         <Header />
         
-        <main className="space-y-16">
+        <main className="space-y-10">
          
           
           <motion.section
@@ -68,7 +68,7 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="pb-12"
+            className=""
           >
             <ColorDisplay
               baseColor={baseColor}
