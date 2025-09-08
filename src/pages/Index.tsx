@@ -77,6 +77,37 @@ const Index = () => {
             />
           </motion.section>
 
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            <div className="bg-card rounded-xl shadow-sm border p-6 text-center space-y-4">
+              <div className="w-12 h-12 mx-auto bg-primary/10 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">🎨</span>
+              </div>
+              <h3 className="font-semibold text-lg">For Designers</h3>
+              <p className="text-muted-foreground">Create stunning color variations instantly for UI mockups, branding palettes, and design systems.</p>
+            </div>
+            
+            <div className="bg-card rounded-xl shadow-sm border p-6 text-center space-y-4">
+              <div className="w-12 h-12 mx-auto bg-primary/10 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">💻</span>
+              </div>
+              <h3 className="font-semibold text-lg">For Developers</h3>
+              <p className="text-muted-foreground">Generate accessible tints and shades from any HEX or RGB color for web design and development.</p>
+            </div>
+            
+            <div className="bg-card rounded-xl shadow-sm border p-6 text-center space-y-4">
+              <div className="w-12 h-12 mx-auto bg-primary/10 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">✨</span>
+              </div>
+              <h3 className="font-semibold text-lg">Fast & Free</h3>
+              <p className="text-muted-foreground">Ultimate tool that's fast, intuitive, and completely free to use. No registration required.</p>
+            </div>
+          </motion.section>
+
           <FAQSection />
         </main>
         
