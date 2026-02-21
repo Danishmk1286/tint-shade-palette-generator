@@ -1,0 +1,327 @@
+
+/**
+ * Converts a hex color to RGB
+ */
+export function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  // Remove the hash if it exists
+  const cleanHex = hex.replace('#', '');
+  
+  // Validate hex format
+  if (!/^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
+    throw new Error(`Invalid hex color: ${hex}`);
+  }
+  
+  // Parse the hex values using substring (substr is deprecated)
+  const r = parseInt(cleanHex.substring(0, 2), 16);
+  const g = parseInt(cleanHex.substring(2, 4), 16);
+  const b = parseInt(cleanHex.substring(4, 6), 16);
+  
+  return { r, g, b };
+}
+
+/**
+ * Converts RGB values to a hex color
+ */
+export function rgbToHex(r: number, g: number, b: number): string {
+  return '#' + [r, g, b]
+    .map(x => {
+      const hex = Math.round(x).toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    })
+    .join('');
+}
+
+/**
+ * Converts RGB to HSL
+ * Uses standard HSL conversion algorithm for accuracy
+ */
+export function rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    // Standard HSL saturation formula
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    // Calculate hue
+    if (max === r) {
+      h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+    } else if (max === g) {
+      h = ((b - r) / d + 2) / 6;
+    } else {
+      h = ((r - g) / d + 4) / 6;
+    }
+  }
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100)
+  };
+}
+
+/**
+ * Converts HSL to RGB
+ * Standard HSL to RGB conversion for accurate color generation
+ */
+export function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: number } {
+  // Normalize HSL values
+  h = h / 360;
+  s = s / 100;
+  l = l / 100;
+
+  let r, g, b;
+
+  if (s === 0) {
+    // Achromatic (gray)
+    r = g = b = l;
+  } else {
+    const hueToRgb = (p: number, q: number, t: number): number => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    r = hueToRgb(p, q, h + 1/3);
+    g = hueToRgb(p, q, h);
+    b = hueToRgb(p, q, h - 1/3);
+  }
+
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255)
+  };
+}
+
+/**
+ * Generates tints (lighter variations) of a color
+ * Returns HEX colors for accuracy and consistency
+ */
+export function generateTints(hex: string, count: number): string[] {
+  if (count <= 0) {
+    return [];
+  }
+
+  const { r, g, b } = hexToRgb(hex);
+  const { h, s, l } = rgbToHsl(r, g, b);
+  
+  const tints: string[] = [];
+  
+  // Adaptive max lightness based on base color
+  // For very light colors, use a lower max to ensure visible tints
+  // For darker colors, use higher max for better range
+  const maxLightness = Math.min(98, Math.max(90, l + (98 - l) * 0.8));
+  
+  // Only generate tints if there's room to lighten
+  if (l >= maxLightness) {
+    return [];
+  }
+  
+  // Calculate uniform steps for consistent distribution
+  const range = maxLightness - l;
+  
+  // Generate each tint with uniform distribution
+  for (let i = 1; i <= count; i++) {
+    // Linear distribution for uniform steps
+    const progress = i / (count + 1);
+    const newLightness = l + range * progress;
+    
+    // Ensure we don't exceed bounds and maintain minimum step from base
+    const clampedLightness = Math.max(l + 0.5, Math.min(98, newLightness));
+    
+    // Convert back to RGB/HEX for accuracy
+    const { r: newR, g: newG, b: newB } = hslToRgb(h, s, clampedLightness);
+    tints.push(rgbToHex(newR, newG, newB));
+  }
+  
+  return tints;
+}
+
+/**
+ * Generates shades (darker variations) of a color
+ * Returns HEX colors for accuracy and consistency
+ */
+export function generateShades(hex: string, count: number): string[] {
+  if (count <= 0) {
+    return [];
+  }
+
+  const { r, g, b } = hexToRgb(hex);
+  const { h, s, l } = rgbToHsl(r, g, b);
+  
+  const shades: string[] = [];
+  
+  // Adaptive min lightness based on base color
+  // For very dark colors, use a higher min to ensure visible shades
+  // For lighter colors, use lower min for better range
+  const minLightness = Math.max(2, Math.min(10, l - (l - 2) * 0.8));
+  
+  // Only generate shades if there's room to darken
+  if (l <= minLightness) {
+    return [];
+  }
+  
+  // Calculate uniform steps for consistent distribution
+  const range = l - minLightness;
+  
+  // Generate each shade with uniform distribution
+  for (let i = 1; i <= count; i++) {
+    // Linear distribution for uniform steps
+    const progress = i / (count + 1);
+    const newLightness = l - range * progress;
+    
+    // Ensure we don't exceed bounds and maintain minimum step from base
+    const clampedLightness = Math.max(2, Math.min(l - 0.5, newLightness));
+    
+    // Convert back to RGB/HEX for accuracy
+    const { r: newR, g: newG, b: newB } = hslToRgb(h, s, clampedLightness);
+    shades.push(rgbToHex(newR, newG, newB));
+  }
+  
+  return shades;
+}
+
+/**
+ * Converts a color to a different format
+ */
+export function convertColor(color: string, format: 'hex' | 'rgb' | 'hsl'): string {
+  try {
+    // Handle HSL format
+    if (color.startsWith('hsl')) {
+      // Improved HSL regex to catch different HSL formats
+      const matches = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+\.?\d*)%\)/i) || 
+                      color.match(/hsl\((\d+)\s+(\d+)%\s+(\d+\.?\d*)%\)/i) ||
+                      color.match(/hsl\((\d+),\s*(\d+\.?\d*)%,\s*(\d+\.?\d*)%\)/i);
+      
+      if (!matches) {
+        console.warn("HSL format not recognized:", color);
+        return color;
+      }
+      
+      const h = parseInt(matches[1]);
+      const s = parseFloat(matches[2]) / 100;
+      const l = parseFloat(matches[3]) / 100;
+      
+      if (format === 'hsl') {
+        return `hsl(${h}, ${(s * 100).toFixed(2)}%, ${(l * 100).toFixed(2)}%)`;
+      }
+      
+      // Use the dedicated hslToRgb function for consistency
+      const rgb = hslToRgb(h, s * 100, l * 100);
+      r = rgb.r;
+      g = rgb.g;
+      b = rgb.b;
+      
+      if (format === 'rgb') {
+        return `rgb(${r}, ${g}, ${b})`;
+      } else {
+        return rgbToHex(r, g, b);
+      }
+    }
+    
+    // Handle hex format
+    if (color.startsWith('#')) {
+      const { r, g, b } = hexToRgb(color);
+      
+      if (format === 'hex') {
+        return color;
+      } else if (format === 'rgb') {
+        return `rgb(${r}, ${g}, ${b})`;
+      } else {
+        const { h, s, l } = rgbToHsl(r, g, b);
+        return `hsl(${h}, ${s}%, ${l}%)`;
+      }
+    }
+    
+    // Handle RGB format
+    if (color.startsWith('rgb')) {
+      const matches = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i) || 
+                     color.match(/rgb\((\d+)\s+(\d+)\s+(\d+)\)/i);
+      
+      if (!matches) {
+        console.warn("RGB format not recognized:", color);
+        return color;
+      }
+      
+      const r = parseInt(matches[1]);
+      const g = parseInt(matches[2]);
+      const b = parseInt(matches[3]);
+      
+      if (format === 'rgb') {
+        return color;
+      } else if (format === 'hex') {
+        return rgbToHex(r, g, b);
+      } else {
+        const { h, s, l } = rgbToHsl(r, g, b);
+        return `hsl(${h}, ${s}%, ${l}%)`;
+      }
+    }
+    
+    // If we couldn't identify the color format, return the original
+    console.warn("Unknown color format:", color);
+    return color;
+  } catch (error) {
+    console.error("Error converting color:", error);
+    return color;
+  }
+}
+
+/**
+ * Determines if a color is light or dark
+ */
+export function isColorLight(color: string): boolean {
+  let r, g, b;
+  
+  if (color.startsWith('#')) {
+    const rgb = hexToRgb(color);
+    r = rgb.r;
+    g = rgb.g;
+    b = rgb.b;
+  } else if (color.startsWith('rgb')) {
+    const matches = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i) || 
+                   color.match(/rgb\((\d+)\s+(\d+)\s+(\d+)\)/i);
+    
+    if (!matches) {
+      return true;
+    }
+    
+    r = parseInt(matches[1]);
+    g = parseInt(matches[2]);
+    b = parseInt(matches[3]);
+  } else if (color.startsWith('hsl')) {
+    const matches = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+\.?\d*)%\)/i) || 
+                   color.match(/hsl\((\d+)\s+(\d+)%\s+(\d+\.?\d*)%\)/i);
+    
+    if (!matches) {
+      return true;
+    }
+    
+    // For HSL, we can just use the lightness value
+    const l = parseFloat(matches[3]);
+    return l > 50;
+  } else {
+    return true;
+  }
+  
+  // Calculate the perceived brightness using the formula:
+  // (R * 0.299 + G * 0.587 + B * 0.114) / 255
+  const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+  
+  // If brightness is greater than 0.5, the color is considered light
+  return brightness > 0.5;
+}

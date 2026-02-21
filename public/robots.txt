@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /node_modules/
+
+# Sitemap
+Sitemap: https://tintandshadesgenerator.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
