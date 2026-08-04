@@ -15,7 +15,10 @@ Generate consistent, production-ready **50–900 tint and shade scales** from a 
 
 ## ✨ Preview
 
-![Tint & Shade Generator Preview](https://github.com/user-attachments/assets/4243f18d-4ee8-4a9b-b14f-56ea1567a5c2)
+Tint & Shade Generator Preview
+
+<img width="1032" height="893" alt="image" src="https://github.com/user-attachments/assets/e656e672-d2f3-4ab4-9c75-35af4faf426e" />
+
 
 ---
 
